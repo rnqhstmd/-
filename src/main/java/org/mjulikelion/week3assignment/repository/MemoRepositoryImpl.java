@@ -1,6 +1,7 @@
 package org.mjulikelion.week3assignment.repository;
 
 import org.mjulikelion.week3assignment.domain.Memo;
+import org.mjulikelion.week3assignment.domain.User;
 import org.mjulikelion.week3assignment.repository.repo_interface.MemoRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,8 +15,11 @@ import java.util.stream.Collectors;
 public class MemoRepositoryImpl implements MemoRepository {
 
     private final Map<String, Memo> memos = new HashMap<>();
+
+
+
     @Override
-    public void createMemo(Memo memo) {
+    public void create(Memo memo) {
         memos.put(memo.getMemoId(), memo);
     }
 

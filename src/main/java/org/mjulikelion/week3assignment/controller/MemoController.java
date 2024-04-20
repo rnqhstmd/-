@@ -2,8 +2,7 @@ package org.mjulikelion.week3assignment.controller;
 
 import lombok.AllArgsConstructor;
 import org.mjulikelion.week3assignment.domain.Memo;
-import org.mjulikelion.week3assignment.sevice.MemoServiceImpl;
-import org.mjulikelion.week3assignment.sevice.service_interface.MemoService;
+import org.mjulikelion.week3assignment.sevice.MemoService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
