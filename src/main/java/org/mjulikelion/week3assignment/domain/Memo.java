@@ -10,10 +10,9 @@ import org.springframework.stereotype.Service;
 public class Memo {
 
     private String memoId;
-    private String content;
-    private String userId;
 
-    public void setContent(String content) {
-        this.content = content;
-    }
+    @Setter
+    private String content;
+
+    private String userId;
 }

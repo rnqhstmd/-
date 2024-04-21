@@ -7,8 +7,6 @@ import java.util.List;
 
 public interface MemoRepository extends Repository<Memo> {
 
-    void create(Memo memo);
-
     //특정 사용자의 모든 메모 조회
     List<Memo> getAllMemoByUserId(String userId);
 
