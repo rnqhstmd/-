@@ -16,7 +16,14 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public void create(User user) {
+        if (userExists(user.getUserId())) {
+            throw new IllegalArgumentException("이미 존재하는 아이디입니다.");
+        }
         users.add(user);
     }
 
+    @Override
+    public boolean userExists(String userId) {
+        return users.contains(userId);
+    }
 }

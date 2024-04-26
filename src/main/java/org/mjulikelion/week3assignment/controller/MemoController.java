@@ -9,7 +9,7 @@ import java.util.List;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/users/{userId}/memos")
+@RequestMapping("/memos")
 public class MemoController {
 
     private final MemoService memoService;
@@ -20,18 +20,18 @@ public class MemoController {
     }
 
     @GetMapping
-    public List<Memo> getAllMemosByUserId(@PathVariable String userId) {
+    public List<Memo> getAllMemosByUserId(@RequestHeader String userId) {
         return memoService.getAllMemosByUserId(userId);
     }
 
     @GetMapping("{memoId}")
-    public Memo getMemoByUserId(@PathVariable String memoId, @PathVariable String userId) {
+    public Memo getMemoByUserId(@PathVariable String memoId, @RequestHeader String userId) {
         return memoService.getMemoByUserId(memoId, userId);
     }
 
 
     @PatchMapping("/{memoId}")
-    public void updateMemoByMemoId(@PathVariable String userId, @PathVariable String memoId, @RequestBody String newContent) {
+    public void updateMemoByMemoId(@RequestHeader String userId, @PathVariable String memoId, @RequestBody String newContent) {
         memoService.updateMemoByMemoId(userId, memoId, newContent);
     }
 

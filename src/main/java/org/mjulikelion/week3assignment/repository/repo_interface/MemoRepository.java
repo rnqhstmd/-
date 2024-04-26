@@ -7,6 +7,9 @@ import java.util.List;
 
 public interface MemoRepository extends Repository<Memo> {
 
+    //메모 아이디 중복 확인
+    boolean memoIdExists(String memoId);
+
     //특정 사용자의 모든 메모 조회
     List<Memo> getAllMemoByUserId(String userId);
 

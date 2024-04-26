@@ -16,11 +16,14 @@ public class MemoRepositoryImpl implements MemoRepository {
 
     private final Map<String, Memo> memos = new HashMap<>();
 
-
-
     @Override
     public void create(Memo memo) {
         memos.put(memo.getMemoId(), memo);
+    }
+
+    @Override
+    public boolean memoIdExists(String memoId) {
+        return memos.containsKey(memoId);
     }
 
     @Override
