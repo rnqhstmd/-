@@ -1,18 +1,17 @@
 package org.mjulikelion.week3assignment.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.stereotype.Service;
 
 @AllArgsConstructor
 @Getter
 public class Memo {
 
     private String memoId;
-
+    @JsonIgnore // 유저아이디를 보호하기 위해 사용된다.
+    private String userId;
     @Setter
     private String content;
-
-    private String userId;
 }

@@ -1,11 +1,9 @@
 package org.mjulikelion.week3assignment.repository;
 
 import org.mjulikelion.week3assignment.domain.Memo;
-import org.mjulikelion.week3assignment.domain.User;
 import org.mjulikelion.week3assignment.repository.repo_interface.MemoRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +34,7 @@ public class MemoRepositoryImpl implements MemoRepository {
     }
 
     @Override
-    public Memo getMemoByUserId(String memoId, String userId) {
+    public Memo getMemoByMemoId(String memoId, String userId) {
         Memo memo = memos.get(memoId);
         if (memo.getUserId().equals(userId)) {
             return memo;
@@ -50,8 +48,7 @@ public class MemoRepositoryImpl implements MemoRepository {
         Memo memo = memos.get(memoId);
         if (memo.getUserId().equals(userId)) {
             memo.setContent(newContent);
-        }
-        else{
+        } else {
             throw new IllegalArgumentException("존재하지 않는 메모입니다.");
         }
     }
@@ -61,8 +58,7 @@ public class MemoRepositoryImpl implements MemoRepository {
         Memo memo = memos.get(memoId);
         if (memo.getUserId().equals(userId)) {
             memos.remove(memoId);
-        }
-        else{
+        } else {
             throw new IllegalArgumentException("존재하지 않는 메모입니다.");
         }
     }

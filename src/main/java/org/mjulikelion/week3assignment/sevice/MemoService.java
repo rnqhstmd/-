@@ -2,11 +2,16 @@ package org.mjulikelion.week3assignment.sevice;
 
 import lombok.AllArgsConstructor;
 import org.mjulikelion.week3assignment.domain.Memo;
+import org.mjulikelion.week3assignment.domain.dto.MemoCreateDto;
+import org.mjulikelion.week3assignment.domain.dto.MemoGetDto;
+import org.mjulikelion.week3assignment.domain.dto.MemoResponseData;
+import org.mjulikelion.week3assignment.domain.dto.MemoUpdateDto;
 import org.mjulikelion.week3assignment.repository.repo_interface.MemoRepository;
 import org.mjulikelion.week3assignment.repository.repo_interface.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -15,28 +20,35 @@ public class MemoService {
     private final MemoRepository memoRepository;
     private final UserRepository userRepository;
 
-    public void createMemo(String userId, String memoId, String content) {
-        if (!userRepository.userExists(userId)) {
-            throw new IllegalArgumentException("존재하지 않는 유저입니다.");
-        } else if (memoRepository.memoIdExists(memoId)) {
-            throw new IllegalArgumentException("이미 존재하는 아이디입니다.");
-        }
 
-        memoRepository.create(new Memo(memoId, content, userId));
+    public void createMemo(String userId, MemoCreateDto memoCreateDto) {
+        String memoId = UUID.randomUUID().toString();
+        Memo memo = new Memo(memoId, userId, memoCreateDto.getContent());
+        memoRepository.create(memo);
     }
 
-    public List<Memo> getAllMemosByUserId(String userId) {
-        return memoRepository.getAllMemoByUserId(userId);
+    public MemoResponseData getAllMemosByUserId(String userId) {
+        List<Memo> memos = memoRepository.getAllMemoByUserId(userId);
+        int total = memos.size();
+        MemoResponseData memoTestResponseData = MemoResponseData.builder()
+                .memoList(memos)
+                .total(total)
+                .build();
+        return memoTestResponseData;
     }
 
 
-    public Memo getMemoByUserId(String memoId, String userId) {
-        return memoRepository.getMemoByUserId(memoId, userId);
+    public MemoGetDto getMemoByUserId(String memoId, String userId) {
+        Memo memo = memoRepository.getMemoByMemoId(memoId, userId);
+        return new MemoGetDto(memo.getContent());
     }
 
 
-    public void updateMemoByMemoId(String userId, String memoId, String newContent) {
-        memoRepository.updateMemoByMemoId(userId, memoId, newContent);
+    public MemoUpdateDto updateMemoByMemoId(String userId, String memoId, MemoUpdateDto memoUpdateDto) {
+        Memo memo = memoRepository.getMemoByMemoId(memoId, userId);
+        memo.setContent(memoUpdateDto.getNewContent()); // newContent 로 세팅
+        memoRepository.updateMemoByMemoId(userId, memoId, memo.getContent()); // newContent 로 대체
+        return new MemoUpdateDto(memo.getContent());
     }
 
 
