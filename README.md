@@ -7,7 +7,7 @@
      - HTTP 메서드 : POST
    - 사용자 수정
      - URI : /users/{userId}
-     - HTTP 메서드 : PATCH
+     - HTTP 메서드 : PATCH
    - 사용자 삭제
      - URI : /users/{userId}
      - HTTP 메서드 : DELETE
