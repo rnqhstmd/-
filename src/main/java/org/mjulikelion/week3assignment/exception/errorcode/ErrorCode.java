@@ -9,7 +9,10 @@ public enum ErrorCode {
 
     USER_NOT_FOUND("4040", "유저를 찾을 수 없습니다."),
     MEMO_NOT_FOUND("4041", "메모를 찾을 수 없습니다."),
-    USER_ALREADY_EXISTS("4042", "이미 존재하는 유저입니다."),
+    LIKE_NOT_FOUND("4042", "좋아요를 찾을 수 없습니다."),
+    USER_NOT_MATCH("4050", "유저가 일치하지 않습니다."),
+    MEMO_NOT_MATCH("4051", "메모가 일치하지 않습니다."),
+    USER_ALREADY_EXISTS("4060", "이미 존재하는 유저입니다."),
     NOT_NULL("9001", "필수값이 누락되었습니다."),
     NOT_BLANK("9002", "필수값이 빈 값이거나 공백으로 되어있습니다."),
     REGEX("9003", "형식에 맞지 않습니다."),

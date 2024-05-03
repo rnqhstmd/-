@@ -9,7 +9,9 @@ public interface LikeRepository {
 
     void delete(Like like);
 
-    List<Like> findAllNameByMemoId(String memoId);
+    List<Like> findAllLikes(String memoId);
 
     boolean likeExistsByUserIdAndMemoId(String userId, String memoId);
+
+    Like findLikeByUserIdAndMemoId(String userId, String memoId);
 }

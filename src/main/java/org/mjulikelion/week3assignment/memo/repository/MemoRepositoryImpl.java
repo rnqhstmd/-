@@ -35,31 +35,19 @@ public class MemoRepositoryImpl implements MemoRepository {
     @Override
     public Memo getMemoByMemoId(String memoId, String userId) {
         Memo memo = memos.get(memoId);
-        if (memo.getUserId().equals(userId)) {
-            return memo;
-        } else {
-            throw new IllegalArgumentException("존재하지 않는 메모입니다.");
-        }
+        return memo;
     }
 
     @Override
     public void updateMemoByMemoId(String userId, String memoId, String newTitle, String newContent) {
         Memo memo = memos.get(memoId);
-        if (memo.getUserId().equals(userId)) {
-            memo.setTitle(newTitle);
-            memo.setContent(newContent);
-        } else {
-            throw new IllegalArgumentException("존재하지 않는 메모입니다.");
-        }
+        memo.setTitle(newTitle);
+        memo.setContent(newContent);
     }
 
     @Override
     public void deleteMemoByMemoId(String userId, String memoId) {
         Memo memo = memos.get(memoId);
-        if (memo.getUserId().equals(userId)) {
-            memos.remove(memoId);
-        } else {
-            throw new IllegalArgumentException("존재하지 않는 메모입니다.");
-        }
+        memos.remove(memo);
     }
 }

@@ -13,9 +13,6 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public void create(User user) {
-        if (userExists(user.getUserId())) {
-            throw new IllegalArgumentException("이미 존재하는 아이디입니다.");
-        }
         users.put(user.getUserId(), user);
     }
 
@@ -31,29 +28,19 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public void deleteUser(String userId) {
-        if (!userExists(userId)) {
-            throw new IllegalArgumentException("존재하지 않는 아이디입니다.");
-        }
         users.remove(userId);
     }
 
     @Override
-    public void updateUserId(User user, String newUserId) {
+    public void updateUser(User user, String newUserId, String newName) {
 
-        if (!userExists(user.getUserId())) {
-            throw new IllegalArgumentException("존재하지 않는 아이디입니다.");
-        } else if (!user.getUserId().equals(newUserId)) {
-            throw new IllegalArgumentException("이미 존재하는 아이디입니다.");
-        } else if (userExists(newUserId)) {
-            throw new IllegalArgumentException("이미 존재하는 아이디입니다.");
-        }
-
-        // 사용자의 oldId를 삭제
+        // 사용자의 oldUserId, oldName 삭제
         User oldUser = users.get(user.getUserId());
         users.remove(oldUser);
 
-        // newId로 업데이트
+        // newUserId, newName 업데이트
         user.setUserId(newUserId);
+        user.setName(newName);
         users.put(user.getUserId(), user);
     }
 }

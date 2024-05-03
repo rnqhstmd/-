@@ -24,7 +24,7 @@ public class LikeRepositoryImpl implements LikeRepository {
     }
 
     @Override
-    public List<Like> findAllNameByMemoId(String memoId) {
+    public List<Like> findAllLikes(String memoId) {
         return likes.values().stream()
                 .filter(like -> like.getMemoId().equals(memoId))
                 .collect(Collectors.toList());
@@ -35,5 +35,13 @@ public class LikeRepositoryImpl implements LikeRepository {
     public boolean likeExistsByUserIdAndMemoId(String userId, String memoId) {
         return likes.values().stream()
                 .anyMatch(like -> like.getUserId().equals(userId) && like.getMemoId().equals(memoId));
+    }
+
+    @Override
+    public Like findLikeByUserIdAndMemoId(String userId, String memoId) {
+        return likes.values().stream()
+                .filter(like -> like.getUserId().equals(userId) && like.getMemoId().equals(memoId))
+                .findAny()
+                .orElse(null);
     }
 }

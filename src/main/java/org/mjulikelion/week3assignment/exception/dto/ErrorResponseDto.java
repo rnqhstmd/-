@@ -2,7 +2,7 @@ package org.mjulikelion.week3assignment.exception.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.mjulikelion.week3assignment.exception.exception.CustomException;
+import org.mjulikelion.week3assignment.exception.CustomException;
 
 @Getter
 @AllArgsConstructor

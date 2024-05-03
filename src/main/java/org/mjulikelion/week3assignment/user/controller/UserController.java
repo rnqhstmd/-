@@ -1,8 +1,9 @@
 package org.mjulikelion.week3assignment.user.controller;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.mjulikelion.week3assignment.response.ResponseDto;
 import org.mjulikelion.week3assignment.user.dto.UserCreateDto;
-import org.mjulikelion.week3assignment.user.dto.UserResponseDto;
 import org.mjulikelion.week3assignment.user.dto.UserUpdateDto;
 import org.mjulikelion.week3assignment.user.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -17,20 +18,20 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<UserResponseDto<Void>> createUser(@RequestBody UserCreateDto userCreateDto) {
+    public ResponseEntity<ResponseDto<Void>> createUser(@RequestBody UserCreateDto userCreateDto) {
         userService.createUser(userCreateDto);
-        return new ResponseEntity<>(UserResponseDto.res(String.valueOf(HttpStatus.CREATED), "사용자 생성 완료"), HttpStatus.CREATED);
+        return new ResponseEntity<>(ResponseDto.res(HttpStatus.CREATED, "사용자 생성 완료"), HttpStatus.CREATED);
     }
 
-    @PatchMapping("/{userId")
-    public ResponseEntity<UserResponseDto<Void>> updateUser(@RequestHeader String userid, @RequestBody UserUpdateDto userUpdateDto) {
-        userService.updateUser(userid, userUpdateDto.getNewUserId(), userUpdateDto);
-        return new ResponseEntity<>(UserResponseDto.res(String.valueOf(HttpStatus.CREATED), "사용자 수정 완료"), HttpStatus.CREATED);
+    @PatchMapping("/userInfo")
+    public ResponseEntity<ResponseDto<Void>> updateUser(@RequestHeader("UserId") String userId, @Valid @RequestBody UserUpdateDto userUpdateDto) {
+        userService.updateUser(userId, userUpdateDto);
+        return new ResponseEntity<>(ResponseDto.res(HttpStatus.OK, "사용자 수정 완료"), HttpStatus.OK);
     }
 
-    @DeleteMapping("/{userId}")
-    public ResponseEntity<UserResponseDto<Void>> deleteUser(@RequestHeader String userId) {
+    @DeleteMapping("/userInfo")
+    public ResponseEntity<ResponseDto<Void>> deleteUser(@RequestHeader String userId) {
         userService.deleteUser(userId);
-        return new ResponseEntity<>(UserResponseDto.res(String.valueOf(HttpStatus.ACCEPTED), "사용자 삭제 완료"), HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(ResponseDto.res(HttpStatus.OK, "사용자 삭제 완료"), HttpStatus.OK);
     }
 }

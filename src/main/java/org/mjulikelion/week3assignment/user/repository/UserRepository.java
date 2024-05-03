@@ -11,6 +11,6 @@ public interface UserRepository {
 
     void deleteUser(String userId);
 
-    // 회원정보 수정 : userId
-    void updateUserId(User user, String newName);
+    // 회원정보 수정
+    void updateUser(User user, String newUserId, String newName);
 }

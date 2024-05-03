@@ -1,4 +1,4 @@
-package org.mjulikelion.week3assignment.exception.exception;
+package org.mjulikelion.week3assignment.exception;
 
 import lombok.Getter;
 import org.mjulikelion.week3assignment.exception.errorcode.ErrorCode;
