@@ -51,10 +51,23 @@ public class ExceptionController {
     }
 
     // UserAlreadyExistsException 처리
-    @ExceptionHandler(UserAlreadyExists.class)
-    public ResponseEntity<ErrorResponseDto> handleUserAlreadyExists(UserAlreadyExists userAlreadyExists) {
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponseDto> handleUserAlreadyExists(UserAlreadyExistsException userAlreadyExists) {
         this.writeLog(userAlreadyExists);
         return new ResponseEntity<>(ErrorResponseDto.res(userAlreadyExists), HttpStatus.BAD_REQUEST);
+    }
+
+    // UserAlreadyExistsException 처리
+    @ExceptionHandler(LikeAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponseDto> handleLikeAlreadyExistsException(LikeAlreadyExistsException likeAlreadyExistsException) {
+        this.writeLog(likeAlreadyExistsException);
+        return new ResponseEntity<>(ErrorResponseDto.res(likeAlreadyExistsException), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidEmailOrPasswordException.class)
+    public ResponseEntity<ErrorResponseDto> handleInvalidEmailOrPasswordException(InvalidEmailOrPasswordException invalidEmailOrPasswordException) {
+        this.writeLog(invalidEmailOrPasswordException);
+        return new ResponseEntity<>(ErrorResponseDto.res(invalidEmailOrPasswordException), HttpStatus.BAD_REQUEST);
     }
 
     // 일반 예외(커스텀한 예외 제외)
