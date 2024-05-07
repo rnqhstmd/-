@@ -8,7 +8,7 @@ import org.mjulikelion.week3assignment.model.Memo;
 @Getter
 @Builder
 @AllArgsConstructor
-public class MemoResponseDto {
+public class MemoResponseData {
     private final Memo memo;
     private final int likeCount;
 }

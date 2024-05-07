@@ -11,5 +11,4 @@ import java.util.List;
 public class LikeListResponseData {
     private List<MemoLike> likeList;
     private int likeCount;
-
 }

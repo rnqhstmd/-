@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import org.mjulikelion.week3assignment.dto.requset.user.UserCreateDto;
 import org.mjulikelion.week3assignment.dto.requset.user.UserLoginDto;
 import org.mjulikelion.week3assignment.dto.requset.user.UserUpdateDto;
-import org.mjulikelion.week3assignment.dto.response.user.UserResponseDto;
+import org.mjulikelion.week3assignment.dto.response.user.UserResponseData;
 import org.mjulikelion.week3assignment.exception.InvalidEmailOrPasswordException;
 import org.mjulikelion.week3assignment.exception.UserAlreadyExistsException;
 import org.mjulikelion.week3assignment.exception.UserNotFoundException;
@@ -22,7 +22,7 @@ public class UserService {
     private final UserRepository userRepository;
 
     // 회원가입
-    public void createUser(UserCreateDto userCreateDto) {
+    public UserResponseData createUser(UserCreateDto userCreateDto) {
         if (userRepository.findByEmail(userCreateDto.getEmail()).isPresent()) {
             throw new UserAlreadyExistsException(ErrorCode.USER_ALREADY_EXISTS, "이미 존재하는 이메일입니다.");
         }
@@ -33,12 +33,11 @@ public class UserService {
                 .password(userCreateDto.getPassword())
                 .build();
         userRepository.save(user);
-        return;
-        new UserResponseDto(user.getId(), user.getEmail(), user.getName());
+        return new UserResponseData(user.getEmail(), user.getName());
     }
 
     // 회원 로그인
-    public UserResponseDto login(UserLoginDto userLoginDto) {
+    public UserResponseData login(UserLoginDto userLoginDto) {
         User user = userRepository.findByEmail(userLoginDto.getEmail())
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
 
@@ -46,11 +45,11 @@ public class UserService {
             throw new InvalidEmailOrPasswordException(ErrorCode.INVALID_EMAIL_OR_PASSWORD);
         }
 
-        return new UserResponseDto(user.getId(), user.getEmail(), user.getName());
+        return new UserResponseData(user.getEmail(), user.getName());
     }
 
     // 회원 정보 수정
-    public UserResponseDto updateUser(UUID id, UserUpdateDto userUpdateDto) {
+    public UserResponseData updateUser(UUID id, UserUpdateDto userUpdateDto) {
 
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
@@ -63,7 +62,7 @@ public class UserService {
         user.setEmail(userUpdateDto.getNewEmail());
 
         userRepository.save(user);
-        return new UserResponseDto(user.getId(), user.getEmail(), user.getName());
+        return new UserResponseData(user.getEmail(), user.getName());
     }
 
     // 회원 탈퇴

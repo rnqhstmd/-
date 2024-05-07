@@ -70,6 +70,20 @@ public class ExceptionController {
         return new ResponseEntity<>(ErrorResponseDto.res(invalidEmailOrPasswordException), HttpStatus.BAD_REQUEST);
     }
 
+    // LikeNotFoundException 처리
+    @ExceptionHandler(OrganizationNotFoundException.class)
+    public ResponseEntity<ErrorResponseDto> handleOrganizationNotFoundException(OrganizationNotFoundException organizationNotFoundException) {
+        this.writeLog(organizationNotFoundException);
+        return new ResponseEntity<>(ErrorResponseDto.res(organizationNotFoundException), HttpStatus.NOT_FOUND);
+    }
+
+    // UserAlreadyExistsException 처리
+    @ExceptionHandler(OrganizationAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponseDto> handleOrganizationAlreadyExistsException(OrganizationAlreadyExistsException organizationAlreadyExistsException) {
+        this.writeLog(organizationAlreadyExistsException);
+        return new ResponseEntity<>(ErrorResponseDto.res(organizationAlreadyExistsException), HttpStatus.BAD_REQUEST);
+    }
+
     // 일반 예외(커스텀한 예외 제외)
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDto> handleException(Exception exception) {

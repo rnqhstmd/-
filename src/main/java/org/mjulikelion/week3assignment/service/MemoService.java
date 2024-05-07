@@ -3,23 +3,23 @@ package org.mjulikelion.week3assignment.service;
 import lombok.AllArgsConstructor;
 import org.mjulikelion.week3assignment.dto.requset.memo.MemoCreateDto;
 import org.mjulikelion.week3assignment.dto.requset.memo.MemoUpdateDto;
+import org.mjulikelion.week3assignment.dto.requset.organization.OrganizationRequsetDto;
 import org.mjulikelion.week3assignment.dto.response.memo.LikeListResponseData;
 import org.mjulikelion.week3assignment.dto.response.memo.MemoListResponseData;
-import org.mjulikelion.week3assignment.dto.response.memo.MemoResponseDto;
-import org.mjulikelion.week3assignment.exception.MemoNotFoundException;
-import org.mjulikelion.week3assignment.exception.MemoNotMatchException;
-import org.mjulikelion.week3assignment.exception.UserNotFoundException;
-import org.mjulikelion.week3assignment.exception.UserNotMatchException;
+import org.mjulikelion.week3assignment.dto.response.memo.MemoResponseData;
+import org.mjulikelion.week3assignment.exception.*;
 import org.mjulikelion.week3assignment.exception.errorcode.ErrorCode;
 import org.mjulikelion.week3assignment.model.Memo;
 import org.mjulikelion.week3assignment.model.MemoLike;
 import org.mjulikelion.week3assignment.model.User;
 import org.mjulikelion.week3assignment.repository.MemoRepository;
+import org.mjulikelion.week3assignment.repository.UserOrganizationRepository;
 import org.mjulikelion.week3assignment.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -27,20 +27,15 @@ public class MemoService {
 
     private final UserRepository userRepository;
     private final MemoRepository memoRepository;
+    private final UserOrganizationRepository userOrganizationRepository;
 
-    private static void validateMemoByWriterId(UUID writerId, Memo memo) {
-        if (!memo.getWriterId().equals(writerId)) {
-            throw new UserNotMatchException(ErrorCode.USER_NOT_MATCH, "작성자가 일치하지 않습니다.");
-        }
-    }
-
-    public MemoResponseDto find(UUID memoId) {
+    public MemoResponseData getMemoByMemoId(UUID memoId) {
         Memo memo = memoRepository.findById(memoId)
                 .orElseThrow(() -> new MemoNotFoundException(ErrorCode.MEMO_NOT_FOUND));
 
         int likeCount = memo.getMemoLikes().size();
 
-        return new MemoResponseDto(memo, likeCount);
+        return new MemoResponseData(memo, likeCount);
     }
 
     public MemoListResponseData getAllMemosByWriterId(UUID writerId) {
@@ -53,6 +48,27 @@ public class MemoService {
         MemoListResponseData memoListResponseData = MemoListResponseData.builder()
                 .memoList(memoList)
                 .total(memoList.size())
+                .build();
+
+        return memoListResponseData;
+    }
+
+    // 특정 소속 내 유저들 모든 메모 조회
+    public MemoListResponseData getAllOrganizationMemos(OrganizationRequsetDto organizationRequsetDto) {
+
+        if (userOrganizationRepository.findByUserIdAndOrganizationId(organizationRequsetDto.getUserId(), organizationRequsetDto.getOrganizationId()).isEmpty()) {
+            throw new OrganizationNotFoundException(ErrorCode.ORGANIZATION_NOT_FOUND);
+        }
+        List<UUID> userIds = userOrganizationRepository.findAllByOrganizationId(organizationRequsetDto
+                        .getOrganizationId()).stream()
+                .map(o -> o.getUser().getId())
+                .collect(Collectors.toList());
+
+        List<Memo> memos = memoRepository.findByUserIdIn(userIds);
+
+        MemoListResponseData memoListResponseData = MemoListResponseData.builder()
+                .memoList(memos)
+                .total(memos.size())
                 .build();
 
         return memoListResponseData;
@@ -71,13 +87,13 @@ public class MemoService {
         memoRepository.save(memo);
     }
 
-    public void updateMemoByMemoId(UUID writerId, UUID memoId, MemoUpdateDto memoUpdateDto) {
-        validateUser(writerId);
+    public void updateMemoByMemoId(UUID userId, UUID memoId, MemoUpdateDto memoUpdateDto) {
+        validateUser(userId);
         Memo memo = memoRepository.findById(memoId).orElseThrow(() -> new MemoNotFoundException(ErrorCode.MEMO_NOT_FOUND));
-        if (memo.getWriterId().equals(writerId)) {
+        if (!memo.getUser().getId().equals(userId)) {
             throw new MemoNotMatchException(ErrorCode.MEMO_NOT_MATCH, "특정 메모를 수정하려했으나, 작성자가 일치하지 않습니다.");
         }
-        validateMemoByWriterId(writerId, memo);
+        validateMemoByWriterId(userId, memo);
         memo.setTitle(memoUpdateDto.getNewTitle());
         memo.setContent(memoUpdateDto.getNewContent());
         memoRepository.save(memo);
@@ -123,6 +139,12 @@ public class MemoService {
     private void validateUser(UUID writerId) {
         if (!userRepository.existsById(writerId)) {
             throw new UserNotFoundException(ErrorCode.USER_NOT_FOUND);
+        }
+    }
+
+    private void validateMemoByWriterId(UUID userId, Memo memo) {
+        if (!memo.getUser().getId().equals(userId)) {
+            throw new UserNotMatchException(ErrorCode.USER_NOT_MATCH, "작성자가 일치하지 않습니다.");
         }
     }
 }

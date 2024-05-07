@@ -15,6 +15,8 @@ public enum ErrorCode {
     USER_ALREADY_EXISTS("4060", "이미 존재하는 유저입니다."),
     INVALID_EMAIL_OR_PASSWORD("4080", "유효하지 않은 이메일이나 패스워드입니다."),
     LIKE_ALREADY_EXISTS("4090", "좋아요가 이미 존재합니다."),
+    ORGANIZATION_NOT_FOUND("4070", "소속을 찾을 수 없습니다."),
+    ORGANIZATION_ALREADY_EXISTS("4071", "이미 존재하는 소속입니다."),
     NOT_NULL("9001", "필수값이 누락되었습니다."),
     NOT_BLANK("9002", "필수값이 빈 값이거나 공백으로 되어있습니다."),
     REGEX("9003", "형식에 맞지 않습니다."),

@@ -11,4 +11,6 @@ import java.util.UUID;
 public interface MemoRepository extends JpaRepository<Memo, UUID> {
 
     List<Memo> findByUserId(UUID id);
+
+    List<Memo> findByUserIdIn(List<UUID> userIds);
 }
