@@ -1,14 +1,17 @@
 package org.mjulikelion.week3assignment.dto.requset.memo;
 
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 
 @Getter
 public class MemoUpdateDto {
-    @NotNull(message = "newTitle이 Null입니다.")
+    @NotNull(message = "새로운 메모 제목이 비어있습니다.")
+    @Size(min = 8, max = 15, message = "수정 메모 제목은 최소 8글자 이상, 15글자 이하로 작성해주세요.")
     private final String newTitle;
 
-    @NotNull(message = "newConten가 null입니다.")
+    @NotNull(message = "새로운 메모가 비어있습니다.")
+    @Size(min = 1, max = 100, message = "새로운 메모는 최소 1글자 이상, 100글자 이하로 작성해주세요.")
     private final String newContent;
 
     public MemoUpdateDto(String newTitle, String newContent) {

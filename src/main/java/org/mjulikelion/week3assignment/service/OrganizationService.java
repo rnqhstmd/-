@@ -15,7 +15,6 @@ import org.mjulikelion.week3assignment.repository.UserOrganizationRepository;
 import org.mjulikelion.week3assignment.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -49,7 +48,6 @@ public class OrganizationService {
         UserOrganization userOrganization = UserOrganization.builder()
                 .user(user)
                 .organization(organization)
-                .joinAt(LocalDateTime.now())
                 .build();
 
         userOrganizationRepository.save(userOrganization);
