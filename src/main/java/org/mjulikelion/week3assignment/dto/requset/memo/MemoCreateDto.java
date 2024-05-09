@@ -2,9 +2,11 @@ package org.mjulikelion.week3assignment.dto.requset.memo;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
+@AllArgsConstructor
 public class MemoCreateDto {
     // 이렇게 DTO 클래스를 만들어서 각종 옵션들을 적용해줄 수 있다.
     @NotNull(message = "메모 제목이 비어있습니다.")

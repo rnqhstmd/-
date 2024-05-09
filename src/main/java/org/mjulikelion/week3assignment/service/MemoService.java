@@ -56,11 +56,11 @@ public class MemoService {
     // 특정 소속 내 유저들 모든 메모 조회
     public MemoListResponseData getAllOrganizationMemos(OrganizationRequsetDto organizationRequsetDto) {
 
-        if (userOrganizationRepository.findByUserIdAndOrganizationId(organizationRequsetDto.getUserId(), organizationRequsetDto.getOrganizationId()).isEmpty()) {
+        if (userOrganizationRepository.findByUserIdAndOrganizationId(organizationRequsetDto.getUserId(),
+                organizationRequsetDto.getOrganizationId()).isEmpty()) {
             throw new OrganizationNotFoundException(ErrorCode.ORGANIZATION_NOT_FOUND);
         }
-        List<UUID> userIds = userOrganizationRepository.findAllByOrganizationId(organizationRequsetDto
-                        .getOrganizationId()).stream()
+        List<UUID> userIds = userOrganizationRepository.findAllByOrganizationId(organizationRequsetDto.getOrganizationId()).stream()
                 .map(o -> o.getUser().getId())
                 .collect(Collectors.toList());
 

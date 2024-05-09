@@ -23,7 +23,7 @@ public class OrganizationController {
     private final MemoService memoService;
 
     @PostMapping
-    public ResponseEntity<ResponseDto<Void>> createOrganization(@Valid @RequestBody OrganizationCreateDto organizationCreateDto, @RequestHeader("User-Id") UUID userId) {
+    public ResponseEntity<ResponseDto<Void>> createOrganization(@Valid @RequestBody OrganizationCreateDto organizationCreateDto) {
         organizationService.createOrganization(organizationCreateDto);
         return new ResponseEntity<>(ResponseDto.res(HttpStatus.CREATED, "소속 생성 완료"), HttpStatus.CREATED);
     }

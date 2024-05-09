@@ -7,7 +7,6 @@ import org.mjulikelion.week3assignment.dto.requset.user.UserLoginDto;
 import org.mjulikelion.week3assignment.dto.requset.user.UserUpdateDto;
 import org.mjulikelion.week3assignment.dto.response.ResponseDto;
 import org.mjulikelion.week3assignment.dto.response.user.UserResponseData;
-import org.mjulikelion.week3assignment.service.OrganizationService;
 import org.mjulikelion.week3assignment.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,9 +20,8 @@ import java.util.UUID;
 public class UserController {
 
     private final UserService userService;
-    private final OrganizationService organizationService;
 
-    @PostMapping("join")
+    @PostMapping("/join")
     public ResponseEntity<ResponseDto<Void>> createUser(@Valid @RequestBody UserCreateDto userCreateDto) {
         userService.createUser(userCreateDto);
         return new ResponseEntity<>(ResponseDto.res(HttpStatus.CREATED, "사용자 생성 완료"), HttpStatus.CREATED);
