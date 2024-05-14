@@ -7,7 +7,8 @@ import lombok.Getter;
 @Getter
 @Builder
 @AllArgsConstructor
-public class MemoResponseData {
-    private final MemoResponse memo;
-    private final int likeCount;
+public class MemoResponse {
+    private String id;
+    private String title;
+    private String content;
 }

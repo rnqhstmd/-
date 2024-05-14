@@ -1,6 +1,5 @@
 package org.mjulikelion.week3assignment.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,10 +17,8 @@ public class MemoLike extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
-    @JsonIgnore
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Memo memo;
-    @JsonIgnore
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private User user;
 

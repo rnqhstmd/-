@@ -14,74 +14,32 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 @RestControllerAdvice
 public class ExceptionController {
-
-    // UserNotFoundException 처리
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<ErrorResponseDto> handleUserNotFoundException(UserNotFoundException userNotFoundException) {
-        this.writeLog(userNotFoundException);
-        return new ResponseEntity<>(ErrorResponseDto.res(userNotFoundException), HttpStatus.NOT_FOUND);
+    private static String extractErrorCode(CustomException customException) {
+        return customException.getErrorCode().toString().substring(0, 2);
     }
 
-    // MemoNotFoundException 처리
-    @ExceptionHandler(MemoNotFoundException.class)
-    public ResponseEntity<ErrorResponseDto> handleMemoNotFoundException(MemoNotFoundException memoNotFoundException) {
-        this.writeLog(memoNotFoundException);
-        return new ResponseEntity<>(ErrorResponseDto.res(memoNotFoundException), HttpStatus.NOT_FOUND);
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<ErrorResponseDto> handleNotFoundException(NotFoundException notFoundException) {
+        this.writeLog(notFoundException);
+        return new ResponseEntity<>(ErrorResponseDto.res(notFoundException), HttpStatus.NOT_FOUND);
     }
 
-    // LikeNotFoundException 처리
-    @ExceptionHandler(LikeNotFoundException.class)
-    public ResponseEntity<ErrorResponseDto> handleLikeNotFoundException(LikeNotFoundException likeNotFoundException) {
-        this.writeLog(likeNotFoundException);
-        return new ResponseEntity<>(ErrorResponseDto.res(likeNotFoundException), HttpStatus.NOT_FOUND);
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<ErrorResponseDto> handleConflictException(ConflictException conflictException) {
+        this.writeLog(conflictException);
+        return new ResponseEntity<>(ErrorResponseDto.res(conflictException), HttpStatus.CONFLICT);
     }
 
-    // UserNotMatchException 처리
-    @ExceptionHandler(UserNotMatchException.class)
-    public ResponseEntity<ErrorResponseDto> handleUserNotMatchException(UserNotMatchException userNotMatchException) {
-        this.writeLog(userNotMatchException);
-        return new ResponseEntity<>(ErrorResponseDto.res(userNotMatchException), HttpStatus.BAD_REQUEST);
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<ErrorResponseDto> handleForbiddenException(ForbiddenException forbiddenException) {
+        this.writeLog(forbiddenException);
+        return new ResponseEntity<>(ErrorResponseDto.res(forbiddenException), HttpStatus.FORBIDDEN);
     }
 
-    // MemoNotMatchException 처리
-    @ExceptionHandler(MemoNotMatchException.class)
-    public ResponseEntity<ErrorResponseDto> handleMemoNotMatchException(MemoNotMatchException memoNotMatchException) {
-        this.writeLog(memoNotMatchException);
-        return new ResponseEntity<>(ErrorResponseDto.res(memoNotMatchException), HttpStatus.BAD_REQUEST);
-    }
-
-    // UserAlreadyExistsException 처리
-    @ExceptionHandler(UserAlreadyExistsException.class)
-    public ResponseEntity<ErrorResponseDto> handleUserAlreadyExists(UserAlreadyExistsException userAlreadyExists) {
-        this.writeLog(userAlreadyExists);
-        return new ResponseEntity<>(ErrorResponseDto.res(userAlreadyExists), HttpStatus.BAD_REQUEST);
-    }
-
-    // UserAlreadyExistsException 처리
-    @ExceptionHandler(LikeAlreadyExistsException.class)
-    public ResponseEntity<ErrorResponseDto> handleLikeAlreadyExistsException(LikeAlreadyExistsException likeAlreadyExistsException) {
-        this.writeLog(likeAlreadyExistsException);
-        return new ResponseEntity<>(ErrorResponseDto.res(likeAlreadyExistsException), HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(InvalidEmailOrPasswordException.class)
-    public ResponseEntity<ErrorResponseDto> handleInvalidEmailOrPasswordException(InvalidEmailOrPasswordException invalidEmailOrPasswordException) {
-        this.writeLog(invalidEmailOrPasswordException);
-        return new ResponseEntity<>(ErrorResponseDto.res(invalidEmailOrPasswordException), HttpStatus.BAD_REQUEST);
-    }
-
-    // LikeNotFoundException 처리
-    @ExceptionHandler(OrganizationNotFoundException.class)
-    public ResponseEntity<ErrorResponseDto> handleOrganizationNotFoundException(OrganizationNotFoundException organizationNotFoundException) {
-        this.writeLog(organizationNotFoundException);
-        return new ResponseEntity<>(ErrorResponseDto.res(organizationNotFoundException), HttpStatus.NOT_FOUND);
-    }
-
-    // UserAlreadyExistsException 처리
-    @ExceptionHandler(OrganizationAlreadyExistsException.class)
-    public ResponseEntity<ErrorResponseDto> handleOrganizationAlreadyExistsException(OrganizationAlreadyExistsException organizationAlreadyExistsException) {
-        this.writeLog(organizationAlreadyExistsException);
-        return new ResponseEntity<>(ErrorResponseDto.res(organizationAlreadyExistsException), HttpStatus.BAD_REQUEST);
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<ErrorResponseDto> handleUnauthorizedException(UnauthorizedException unauthorizedException) {
+        this.writeLog(unauthorizedException);
+        return new ResponseEntity<>(ErrorResponseDto.res(unauthorizedException), HttpStatus.UNAUTHORIZED);
     }
 
     // 일반 예외(커스텀한 예외 제외)
@@ -108,6 +66,7 @@ public class ExceptionController {
 
         return new ResponseEntity<>(ErrorResponseDto.res(dtoValidationException), HttpStatus.BAD_REQUEST);
     }
+
 
     private void writeLog(CustomException customException) {
         String exceptionName = customException.getClass().getSimpleName();

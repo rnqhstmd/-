@@ -3,12 +3,14 @@ package org.mjulikelion.week3assignment.controller;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.mjulikelion.week3assignment.authentication.AuthenticatedUser;
 import org.mjulikelion.week3assignment.dto.requset.memo.MemoCreateDto;
 import org.mjulikelion.week3assignment.dto.requset.memo.MemoUpdateDto;
 import org.mjulikelion.week3assignment.dto.response.ResponseDto;
 import org.mjulikelion.week3assignment.dto.response.memo.LikeListResponseData;
 import org.mjulikelion.week3assignment.dto.response.memo.MemoListResponseData;
 import org.mjulikelion.week3assignment.dto.response.memo.MemoResponseData;
+import org.mjulikelion.week3assignment.model.User;
 import org.mjulikelion.week3assignment.service.MemoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,16 +26,27 @@ public class MemoController {
 
     private final MemoService memoService;
 
+    @GetMapping("/test")
+    public ResponseEntity<ResponseDto<Void>> test() {
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        return new ResponseEntity<>(ResponseDto.res(HttpStatus.OK, "ok"), HttpStatus.OK);
+    }
+
+
     @PostMapping
-    public ResponseEntity<ResponseDto<Void>> createMemo(@RequestBody @Valid MemoCreateDto memoCreateDto,
-                                                        @RequestHeader("User-Id") UUID userId) {
-        memoService.createMemo(userId, memoCreateDto);
+    public ResponseEntity<ResponseDto<Void>> createMemo(@AuthenticatedUser User user,
+                                                        @RequestBody @Valid MemoCreateDto memoCreateDto) {
+        memoService.createMemo(user.getId(), memoCreateDto);
         return new ResponseEntity<>(ResponseDto.res(HttpStatus.CREATED, "메모 생성 완료"), HttpStatus.CREATED);
     }
 
     @GetMapping
-    public ResponseEntity<ResponseDto<MemoListResponseData>> getAllMemosByUserId(@RequestHeader("User-Id") UUID userId) {
-        MemoListResponseData memos = memoService.getAllMemosByWriterId(userId);
+    public ResponseEntity<ResponseDto<MemoListResponseData>> getAllMemosByUserId(@AuthenticatedUser User user) {
+        MemoListResponseData memos = memoService.getAllMemosByWriterId(user.getId());
         return new ResponseEntity<>(ResponseDto.res(HttpStatus.OK, "메모 조회 완료", memos), HttpStatus.OK);
     }
 
@@ -45,32 +58,32 @@ public class MemoController {
 
 
     @PatchMapping("/{id}")
-    public ResponseEntity<ResponseDto<Void>> updateMemoByMemoId(@RequestHeader("User-Id") UUID userId,
+    public ResponseEntity<ResponseDto<Void>> updateMemoByMemoId(@AuthenticatedUser User user,
                                                                 @PathVariable("id") UUID memoId,
                                                                 @RequestBody @Valid MemoUpdateDto memoUpdateDto) {
-        memoService.updateMemoByMemoId(userId, memoId, memoUpdateDto);
+        memoService.updateMemoByMemoId(user.getId(), memoId, memoUpdateDto);
         return ResponseEntity.ok(ResponseDto.res(HttpStatus.OK, "메모 수정 성공"));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ResponseDto<Void>> deleteMemoByMemoId(@RequestHeader("User-Id") UUID userId,
+    public ResponseEntity<ResponseDto<Void>> deleteMemoByMemoId(@AuthenticatedUser User user,
                                                                 @PathVariable("id") UUID memoId) {
-        memoService.deleteMemoByMemoId(userId, memoId);
+        memoService.deleteMemoByMemoId(user.getId(), memoId);
         return new ResponseEntity<>(ResponseDto.res(HttpStatus.OK, "메모 삭제 완료"), HttpStatus.OK);
     }
 
     @PostMapping("/{id}/likes")
-    public ResponseEntity<ResponseDto<Void>> like(@PathVariable("id") UUID memoId,
-                                                  @RequestHeader("User-Id") UUID userId) {
-        memoService.like(memoId, userId);
+    public ResponseEntity<ResponseDto<Void>> like(@AuthenticatedUser User user,
+                                                  @PathVariable("id") UUID memoId) {
+        memoService.like(memoId, user.getId());
         return new ResponseEntity<>(ResponseDto.res(HttpStatus.CREATED, "좋아요 생성 완료"), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}/likes")
-    public ResponseEntity<ResponseDto<Void>> deleteLike(@PathVariable("id") UUID memoId,
-                                                        @RequestHeader("User-Id") UUID userId) {
-        memoService.unlike(memoId, userId);
-        return new ResponseEntity<>(ResponseDto.res(HttpStatus.ACCEPTED, "좋아요 삭제 완료"), HttpStatus.ACCEPTED);
+    public ResponseEntity<ResponseDto<Void>> deleteLike(@AuthenticatedUser User user,
+                                                        @PathVariable("id") UUID memoId) {
+        memoService.unlike(memoId, user.getId());
+        return new ResponseEntity<>(ResponseDto.res(HttpStatus.OK, "좋아요 삭제 완료"), HttpStatus.ACCEPTED);
     }
 
     @GetMapping("/{id}/likes")

@@ -3,9 +3,8 @@ package org.mjulikelion.week3assignment.service;
 import lombok.AllArgsConstructor;
 import org.mjulikelion.week3assignment.dto.requset.organization.OrganizationCreateDto;
 import org.mjulikelion.week3assignment.dto.requset.organization.OrganizationRequsetDto;
-import org.mjulikelion.week3assignment.exception.OrganizationAlreadyExistsException;
-import org.mjulikelion.week3assignment.exception.OrganizationNotFoundException;
-import org.mjulikelion.week3assignment.exception.UserNotFoundException;
+import org.mjulikelion.week3assignment.exception.ConflictException;
+import org.mjulikelion.week3assignment.exception.NotFoundException;
 import org.mjulikelion.week3assignment.exception.errorcode.ErrorCode;
 import org.mjulikelion.week3assignment.model.Organization;
 import org.mjulikelion.week3assignment.model.User;
@@ -27,9 +26,8 @@ public class OrganizationService {
 
     // 소속 생성
     public void createOrganization(OrganizationCreateDto organizationCreateDto) {
-        if (organizationRepository.existsByName(organizationCreateDto.getName())) {
-            throw new OrganizationAlreadyExistsException(ErrorCode.ORGANIZATION_ALREADY_EXISTS);
-        }
+
+        validateOrganizationByName(organizationCreateDto);
 
         Organization organization = Organization.builder()
                 .name(organizationCreateDto.getName())
@@ -40,10 +38,8 @@ public class OrganizationService {
 
     // 소속 가입
     public void joinOrganization(OrganizationRequsetDto joinOrganizationDto) {
-        User user = userRepository.findById(joinOrganizationDto.getUserId())
-                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
-        Organization organization = organizationRepository.findById(joinOrganizationDto.getOrganizationId())
-                .orElseThrow(() -> new OrganizationNotFoundException(ErrorCode.ORGANIZATION_NOT_FOUND));
+        User user = validUser(joinOrganizationDto);
+        Organization organization = validOrganization(joinOrganizationDto);
 
         UserOrganization userOrganization = UserOrganization.builder()
                 .user(user)
@@ -55,9 +51,33 @@ public class OrganizationService {
 
     // 소속 탈퇴
     public void exitOrganization(UUID userId, UUID organizationId) {
-        UserOrganization userOrganization = userOrganizationRepository.findByUserIdAndOrganizationId(userId, organizationId)
-                .orElseThrow(() -> new OrganizationNotFoundException(ErrorCode.ORGANIZATION_NOT_FOUND));
+        UserOrganization userOrganization = validateUserOrganization(userId, organizationId);
 
         userOrganizationRepository.delete(userOrganization);
+    }
+
+    // 소속 이름이 이미 존재하는지 검증
+    private void validateOrganizationByName(OrganizationCreateDto organizationCreateDto) {
+        if (organizationRepository.existsByName(organizationCreateDto.getName())) {
+            throw new ConflictException(ErrorCode.ORGANIZATION_ALREADY_EXISTS);
+        }
+    }
+
+    // 유저id로 존재 검증
+    private User validUser(OrganizationRequsetDto joinOrganizationDto) {
+        return userRepository.findById(joinOrganizationDto.getUserId())
+                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    // 소속id로 존재 검증
+    private Organization validOrganization(OrganizationRequsetDto joinOrganizationDto) {
+        return organizationRepository.findById(joinOrganizationDto.getOrganizationId())
+                .orElseThrow(() -> new NotFoundException(ErrorCode.ORGANIZATION_NOT_FOUND));
+    }
+
+    // 유저id, 소속id로 소속 반환
+    private UserOrganization validateUserOrganization(UUID userId, UUID organizationId) {
+        return userOrganizationRepository.findByUserIdAndOrganizationId(userId, organizationId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.ORGANIZATION_NOT_FOUND));
     }
 }
