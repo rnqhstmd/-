@@ -11,6 +11,7 @@ import org.mjulikelion.week3assignment.repository.UserRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import java.io.UnsupportedEncodingException;
 import java.util.UUID;
 
 @Slf4j
@@ -28,7 +29,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
      * 4. AuthenticationContext 에 User 저장
      */
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws UnsupportedEncodingException {
         String accessToken = AuthenticationExtractor.extract(request);
         log.info("accessToken 추출 성공:{}", accessToken);
         UUID userId = UUID.fromString(jwtTokenProvider.getPayload(accessToken));

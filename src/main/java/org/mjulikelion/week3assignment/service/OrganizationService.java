@@ -42,7 +42,8 @@ public class OrganizationService {
         Organization organization = validOrganization(organizationId);
 
         // 소속에 이미 존재하는 유저인지 검증
-        validateUserOrganization(user.getId(), organizationId);
+        validateUserNotInOrganization(user.getId(), organizationId);
+
         UserOrganization userOrganization = UserOrganization.builder()
                 .user(user)
                 .organization(organization)
@@ -59,6 +60,11 @@ public class OrganizationService {
         userOrganizationRepository.delete(userOrganization);
     }
 
+    public void validateUserNotInOrganization(UUID userId, UUID organizationId) {
+        if (userOrganizationRepository.existsByUserIdAndOrganizationId(userId, organizationId)) {
+            throw new ConflictException(ErrorCode.USER_ALREADY_EXISTS);
+        }
+    }
 
     private void validateOrganizationByName(String name) {
         if (organizationRepository.existsByName(name)) {

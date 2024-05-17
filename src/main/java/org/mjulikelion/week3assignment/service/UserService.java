@@ -1,6 +1,7 @@
 package org.mjulikelion.week3assignment.service;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.mjulikelion.week3assignment.authentication.JwtTokenProvider;
 import org.mjulikelion.week3assignment.dto.requset.user.UserCreateDto;
 import org.mjulikelion.week3assignment.dto.requset.user.UserLoginDto;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class UserService {
@@ -48,7 +50,7 @@ public class UserService {
         validateLoginUser(user, userLoginDto.getEmail(), userLoginDto.getPassword());
 
         String token = jwtTokenProvider.createToken(String.valueOf(user.getId()));
-
+        log.info("login 메서드 token 생성 ={}", token);
         // 토큰 반환
         return new TokenResponseDto(token);
     }
