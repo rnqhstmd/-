@@ -26,8 +26,4 @@ public class MemoLike extends BaseEntity {
         this.memo = memo;
         this.user = user;
     }
-
-    public boolean isLikedByUser(User user) {
-        return this.user.equals(user);
-    }
 }

@@ -1,8 +1,12 @@
 package org.mjulikelion.week3assignment.controller;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.mjulikelion.week3assignment.authentication.AuthenticatedUser;
+import org.mjulikelion.week3assignment.authentication.AuthenticationExtractor;
+import org.mjulikelion.week3assignment.authentication.JwtEncoder;
 import org.mjulikelion.week3assignment.dto.requset.user.UserCreateDto;
 import org.mjulikelion.week3assignment.dto.requset.user.UserLoginDto;
 import org.mjulikelion.week3assignment.dto.requset.user.UserUpdateDto;
@@ -28,8 +32,12 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ResponseDto<TokenResponseDto>> login(@Valid @RequestBody UserLoginDto userLoginDto) {
+    public ResponseEntity<ResponseDto<TokenResponseDto>> login(@Valid @RequestBody UserLoginDto userLoginDto, HttpServletResponse response) {
         TokenResponseDto tokenResponseDto = userService.login(userLoginDto);
+        String bearerToken = JwtEncoder.TOKEN_TYPE + tokenResponseDto.getAccessToken();
+        Cookie cookie = new Cookie(AuthenticationExtractor.TOKEN_COOKIE_NAME, bearerToken);
+        cookie.setHttpOnly(true);
+        response.addCookie(cookie);
         return new ResponseEntity<>(ResponseDto.res(HttpStatus.OK, "사용자 로그인 완료", tokenResponseDto), HttpStatus.CREATED);
     }
 

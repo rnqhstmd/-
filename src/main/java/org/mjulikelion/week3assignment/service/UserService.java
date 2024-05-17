@@ -1,7 +1,6 @@
 package org.mjulikelion.week3assignment.service;
 
 import lombok.AllArgsConstructor;
-import org.mjulikelion.week3assignment.authentication.AuthenticatedUser;
 import org.mjulikelion.week3assignment.authentication.JwtTokenProvider;
 import org.mjulikelion.week3assignment.dto.requset.user.UserCreateDto;
 import org.mjulikelion.week3assignment.dto.requset.user.UserLoginDto;
@@ -25,15 +24,10 @@ public class UserService {
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
 
-    private static void validateLoginUser(UserLoginDto userLoginDto, User user) {
-        if (!userLoginDto.getPassword().matches(user.getPassword()) && !userLoginDto.getEmail().matches(user.getEmail())) {
-            throw new UnauthorizedException(ErrorCode.INVALID_EMAIL_OR_PASSWORD, "로그인하려했으나 이메일이나 패스워드가 유효하지 않습니다.");
-        }
-    }
 
     // 회원가입
     public UserResponseData createUser(UserCreateDto userCreateDto) {
-
+        // 수정 시 존재하는 이메일 검증
         validateEmailNotExists(userCreateDto.getEmail());
 
         User user = User.builder()
@@ -42,13 +36,16 @@ public class UserService {
                 .password(userCreateDto.getPassword())
                 .build();
         userRepository.save(user);
-        return new UserResponseData(user.getEmail(), user.getName());
+        return new UserResponseData(user);
     }
 
     // 회원 로그인
     public TokenResponseDto login(UserLoginDto userLoginDto) {
+        // 이메일로 유저 가져오기
         User user = getUserByEmail(userLoginDto.getEmail());
-        validateLoginUser(userLoginDto, user);
+
+        // 이메일 패스워드 매치 검증
+        validateLoginUser(user, userLoginDto.getEmail(), userLoginDto.getPassword());
 
         String token = jwtTokenProvider.createToken(String.valueOf(user.getId()));
 
@@ -57,43 +54,43 @@ public class UserService {
     }
 
     // 회원 정보 수정
-    public UserResponseData updateUser(@AuthenticatedUser User authenticatedUser, UserUpdateDto userUpdateDto) {
-
-        User user = validateUser(authenticatedUser.getId());
+    public UserResponseData updateUser(User user, UserUpdateDto userUpdateDto) {
+        // 이미 존재하는 이름과 기존의 동일한 이름 검증
+        if (userRepository.existsByName(user.getName()) && userUpdateDto.getNewName().matches(user.getName())) {
+            throw new ConflictException(ErrorCode.USER_ALREADY_EXISTS);
+        }
         user.setName(userUpdateDto.getNewName());
 
         // 이미 존재하는 이메일과 기존과 동일한 이메일 검증
         if (userRepository.existsByEmail(userUpdateDto.getNewEmail()) && userUpdateDto.getNewEmail().matches(user.getEmail())) {
             throw new ConflictException(ErrorCode.USER_ALREADY_EXISTS);
         }
-
         user.setEmail(userUpdateDto.getNewEmail());
+
         userRepository.save(user);
-        return new UserResponseData(user.getEmail(), user.getName());
+
+        return new UserResponseData(user);
     }
 
     // 회원 탈퇴
     public void deleteUser(UUID id) {
-        User user = validateUser(id);
-        userRepository.delete(user);
+        userRepository.deleteById(id);
     }
 
-    // 유저 id로 존재 검증
-    private User validateUser(UUID userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
+    private void validateLoginUser(User user, String email, String password) {
+        if (!email.matches(user.getEmail()) && !password.matches(user.getPassword())) {
+            throw new UnauthorizedException(ErrorCode.INVALID_EMAIL_OR_PASSWORD, "로그인하려했으나 이메일이나 패스워드가 유효하지 않습니다.");
+        }
     }
 
-    // 수정 시 존재하는 이메일 검증
     private void validateEmailNotExists(String email) {
         if (userRepository.existsByEmail(email)) {
             throw new ConflictException(ErrorCode.USER_ALREADY_EXISTS);
         }
     }
 
-    // 이메일로 유저 가져오기
     private User getUserByEmail(String email) {
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new ConflictException(ErrorCode.USER_ALREADY_EXISTS));
+                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
     }
 }

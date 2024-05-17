@@ -4,7 +4,6 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.mjulikelion.week3assignment.authentication.AuthenticatedUser;
 import org.mjulikelion.week3assignment.dto.requset.organization.OrganizationCreateDto;
-import org.mjulikelion.week3assignment.dto.requset.organization.OrganizationRequsetDto;
 import org.mjulikelion.week3assignment.dto.response.ResponseDto;
 import org.mjulikelion.week3assignment.dto.response.memo.MemoListResponseData;
 import org.mjulikelion.week3assignment.model.User;
@@ -33,29 +32,21 @@ public class OrganizationController {
     @PostMapping("{id}/join")
     public ResponseEntity<ResponseDto<Void>> joinOrganization(@PathVariable("id") UUID organizationId,
                                                               @AuthenticatedUser User user) {
-        OrganizationRequsetDto joinOrganizationDto = OrganizationRequsetDto.builder()
-                .userId(user.getId())
-                .organizationId(organizationId)
-                .build();
-        organizationService.joinOrganization(joinOrganizationDto);
+        organizationService.joinOrganization(user, organizationId);
         return new ResponseEntity<>(ResponseDto.res(HttpStatus.OK, "소속 가입 완료"), HttpStatus.ACCEPTED);
     }
 
     @GetMapping("/{id}/memos")
     public ResponseEntity<ResponseDto<MemoListResponseData>> getAllOrganizationMemos(@PathVariable("id") UUID organizationId,
                                                                                      @AuthenticatedUser User user) {
-        OrganizationRequsetDto organizationRequsetDto = OrganizationRequsetDto.builder()
-                .userId(user.getId())
-                .organizationId(organizationId)
-                .build();
-        MemoListResponseData allOrganizationMemos = memoService.getAllOrganizationMemos(organizationRequsetDto);
+        MemoListResponseData allOrganizationMemos = memoService.getAllOrganizationMemos(user, organizationId);
         return new ResponseEntity<>(ResponseDto.res(HttpStatus.OK, "소속 메모 조회 완료", allOrganizationMemos), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}/exit")
     public ResponseEntity<ResponseDto<Void>> exitOrganization(@PathVariable("id") UUID organizationId,
                                                               @AuthenticatedUser User user) {
-        organizationService.exitOrganization(organizationId, user.getId());
+        organizationService.exitOrganization(user.getId(), organizationId);
         return new ResponseEntity<>(ResponseDto.res(HttpStatus.OK, "소속 탈퇴 완료"), HttpStatus.OK);
     }
 }
