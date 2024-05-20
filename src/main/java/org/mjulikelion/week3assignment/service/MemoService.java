@@ -148,7 +148,6 @@ public class MemoService {
         }
     }
 
-
     private Memo validateMemoByMemoId(UUID memoId) {
         return memoRepository.findById(memoId).orElseThrow(() -> new NotFoundException(ErrorCode.MEMO_NOT_FOUND));
     }

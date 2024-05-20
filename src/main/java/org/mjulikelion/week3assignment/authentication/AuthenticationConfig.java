@@ -21,7 +21,6 @@ public class AuthenticationConfig implements WebMvcConfigurer {
                 .addPathPatterns("/memos/**") // 모든 메모 기능 사용시
                 .addPathPatterns("/organizations/**") // 모든 소속 기능 사용시
                 .excludePathPatterns("/organizations"); // 소속 생성시는 제외
-
     }
 
     @Override

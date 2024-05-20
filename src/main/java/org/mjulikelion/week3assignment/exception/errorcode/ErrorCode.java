@@ -23,7 +23,7 @@ public enum ErrorCode {
     ORGANIZATION_ALREADY_EXISTS("4092", "이미 존재하는 소속입니다."),
 
     // UnauthorizedException
-    INVALID_EMAIL_OR_PASSWORD("4010", "유효하지 않은 이메일이나 패스워드입니다."),
+    INVALID_PASSWORD("4010", "유효하지 않은 패스워드입니다."),
     INVALID_TOKEN("4011", "유효하지 않은 토큰입니다."),
     TOKEN_NOT_FOUND("4044", "토큰을 찾을 수 없습니다."),
 

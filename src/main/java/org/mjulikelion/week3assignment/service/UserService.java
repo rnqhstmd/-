@@ -3,6 +3,7 @@ package org.mjulikelion.week3assignment.service;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.mjulikelion.week3assignment.authentication.JwtTokenProvider;
+import org.mjulikelion.week3assignment.authentication.PasswordHashEncryption;
 import org.mjulikelion.week3assignment.dto.requset.user.UserCreateDto;
 import org.mjulikelion.week3assignment.dto.requset.user.UserLoginDto;
 import org.mjulikelion.week3assignment.dto.requset.user.UserUpdateDto;
@@ -25,17 +26,22 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
+    private final PasswordHashEncryption passwordHashEncryption;
 
 
     // 회원가입
     public UserResponseData createUser(UserCreateDto userCreateDto) {
-        // 수정 시 존재하는 이메일 검증
-        validateEmailNotExists(userCreateDto.getEmail());
+        // 존재하는 이메일 검증
+        validateEmailExists(userCreateDto.getEmail());
+
+        // 패스워드 암호화
+        String plainPassword = userCreateDto.getPassword();
+        String EncryptedPassword = passwordHashEncryption.encrypt(plainPassword);
 
         User user = User.builder()
                 .email(userCreateDto.getEmail())
                 .name(userCreateDto.getName())
-                .password(userCreateDto.getPassword())
+                .password(EncryptedPassword)
                 .build();
         userRepository.save(user);
         return new UserResponseData(user);
@@ -46,11 +52,16 @@ public class UserService {
         // 이메일로 유저 가져오기
         User user = getUserByEmail(userLoginDto.getEmail());
 
-        // 이메일 패스워드 매치 검증
-        validateLoginUser(user, userLoginDto.getEmail(), userLoginDto.getPassword());
+        // 비밀번호 검증
+        String plainPassword = userLoginDto.getPassword();
+        if (!passwordHashEncryption.matches(plainPassword, user.getPassword())) {
+            throw new UnauthorizedException(ErrorCode.INVALID_PASSWORD, "로그인하려했으나 패스워드가 유효하지 않습니다.");
+        }
 
+        // 토큰 생성
         String token = jwtTokenProvider.createToken(String.valueOf(user.getId()));
         log.info("login 메서드 token 생성 ={}", token);
+
         // 토큰 반환
         return new TokenResponseDto(token);
     }
@@ -79,13 +90,7 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    private void validateLoginUser(User user, String email, String password) {
-        if (!email.matches(user.getEmail()) && !password.matches(user.getPassword())) {
-            throw new UnauthorizedException(ErrorCode.INVALID_EMAIL_OR_PASSWORD, "로그인하려했으나 이메일이나 패스워드가 유효하지 않습니다.");
-        }
-    }
-
-    private void validateEmailNotExists(String email) {
+    private void validateEmailExists(String email) {
         if (userRepository.existsByEmail(email)) {
             throw new ConflictException(ErrorCode.USER_ALREADY_EXISTS);
         }

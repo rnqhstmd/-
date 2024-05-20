@@ -13,7 +13,6 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 public class AuthenticatedUserArgumentResolver implements HandlerMethodArgumentResolver {
     private final AuthenticationContext authenticationContext;
 
-
     @Override
     public boolean supportsParameter(final MethodParameter parameter) {
         return parameter.hasParameterAnnotation(AuthenticatedUser.class);

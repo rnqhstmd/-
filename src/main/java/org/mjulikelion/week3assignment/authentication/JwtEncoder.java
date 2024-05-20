@@ -7,6 +7,7 @@ import org.mjulikelion.week3assignment.exception.errorcode.ErrorCode;
 import org.springframework.stereotype.Component;
 
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
 @Slf4j
@@ -17,7 +18,8 @@ public class JwtEncoder {
     public static final String TOKEN_TYPE = "Bearer ";
 
     public static String encodeJwtBearerToken(String token) {
-        return TOKEN_TYPE + token;
+        String cookieValue = TOKEN_TYPE + token;
+        return URLEncoder.encode(cookieValue, StandardCharsets.UTF_8).replaceAll("\\+", "%20");
     }
 
     public static String decodeJwtBearerToken(String cookieValue) {
